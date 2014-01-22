@@ -29,7 +29,7 @@ class FastQCParser(object):
 
         line = self.input.readline()
         while line:
-            self._parse_module(line)
+            self._parse_module_content(line)
             line = self.input.readline()
 
     def _parse_version(self):
@@ -46,7 +46,7 @@ class FastQCParser(object):
 
         return
 
-    def _parse_module(self, line):
+    def _parse_module_content(self, line):
 
         m = re.match('>>(?P<modulename>[-a-zA-Z 0-9%]+)\t(?P<result>pass|warn|fail)', line)
 
@@ -69,6 +69,38 @@ class FastQCParser(object):
             content.append(line)
             line = self.input.readline()
 
-        self.modules[modulename] = {'raw_content': "".join(content)}
+        self.modules[modulename] = {'raw_content': content}
 
         return
+
+    def _parse_module_table(self, modulename):
+
+        if not modulename in self.modules:
+            log.error("%s does not exist in modules list" % modulename)
+            return None
+
+        lines = self.modules[modulename]['raw_content'] 
+
+        header = lines[0]
+
+        if not header.startswith("#"):
+            log.error("Header does not start with # for %s content" % modulename) 
+            return None
+
+        header_values = header.lstrip("#").rstrip().split("\t")
+
+        table = list()
+
+        for values in lines[1:]:
+            table.append(dict(zip(header_values, values.strip().split("\t")))) 
+
+        self.modules[modulename]['table'] = table
+
+        return table
+
+    def get_module_table(self, modulename):
+
+        if 'table' in self.modules[modulename]:
+            return self.modules[modulename]['table']
+        else:
+            return self._parse_module_table(modulename)

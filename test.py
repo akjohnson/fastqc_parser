@@ -34,6 +34,32 @@ class TestBasicParsing(unittest.TestCase):
         for module in self.expected_results.keys():
             self.assertEqual(self.expected_results[module], self.parser.module_results[module])
 
+    def test_basic_statistics(self):
+        table = self.parser.get_module_table('Basic Statistics')
+
+        self.assertIsNotNone(table)
+
+        self.assertEqual(table[0]['Measure'], 'Filename')
+        self.assertEqual(table[0]['Value'], 'ExampleSample_ATCGTC_L005_R1_001.fastq.gz')
+
+        self.assertEqual(table[1]['Measure'], 'File type')
+        self.assertEqual(table[1]['Value'], 'Conventional base calls')
+
+        self.assertEqual(table[2]['Measure'], 'Encoding')
+        self.assertEqual(table[2]['Value'], 'Sanger / Illumina 1.9')
+
+        self.assertEqual(table[3]['Measure'], 'Total Sequences')
+        self.assertEqual(table[3]['Value'], '22068720')
+
+        self.assertEqual(table[4]['Measure'], 'Filtered Sequences')
+        self.assertEqual(table[4]['Value'], '5853084')
+
+        self.assertEqual(table[5]['Measure'], 'Sequence length')
+        self.assertEqual(table[5]['Value'], '36')
+
+        self.assertEqual(table[6]['Measure'], '%GC')
+        self.assertEqual(table[6]['Value'], '48')
+
 if __name__ == '__main__':
     logging.basicConfig( stream=sys.stderr )
     logging.getLogger( "fastqc_parser" ).setLevel( logging.DEBUG )
