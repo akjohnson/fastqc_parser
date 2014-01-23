@@ -95,6 +95,7 @@ class FastQCParser(object):
             table.append(dict(zip(header_values, values.strip().split("\t")))) 
 
         self.modules[modulename]['table'] = table
+        self.modules[modulename]['table_headers'] = header_values
 
         return table
 
@@ -104,3 +105,11 @@ class FastQCParser(object):
             return self.modules[modulename]['table']
         else:
             return self._parse_module_table(modulename)
+
+    def get_module_table_headers(self, modulename):
+
+        if 'table_headers' in self.modules[modulename]:
+            return self.modules[modulename]['table_headers']
+        else:
+            self._parse_module_table(modulename)
+            return self.modules[modulename]['table_headers']

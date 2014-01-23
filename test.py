@@ -60,6 +60,9 @@ class TestBasicParsing(unittest.TestCase):
         self.assertEqual(table[6]['Measure'], '%GC')
         self.assertEqual(table[6]['Value'], '48')
 
+        headers = self.parser.get_module_table_headers('Basic Statistics')
+        self.assertItemsEqual(['Measure', 'Value'], headers)
+
 if __name__ == '__main__':
     logging.basicConfig( stream=sys.stderr )
     logging.getLogger( "fastqc_parser" ).setLevel( logging.DEBUG )
