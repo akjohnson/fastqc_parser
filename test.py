@@ -22,7 +22,7 @@ class TestBasicParsing(unittest.TestCase):
 
     def setUp(self):
         self.file = "examples/basic.txt"
-        self.parser = FastQCParser(self.file)
+        self.parser = FastQCParser(filename = self.file)
 
     def test_version(self):
         self.assertEqual(self.parser.version, '0.10.1')
@@ -62,6 +62,14 @@ class TestBasicParsing(unittest.TestCase):
 
         headers = self.parser.get_module_table_headers('Basic Statistics')
         self.assertItemsEqual(['Measure', 'Value'], headers)
+
+class TestContentParsing(TestBasicParsing):
+"""Run the same tests as above, except on passed content instead of a file loaded."""
+
+    def setUp(self):
+        self.file = "examples/basic.txt"
+        content = open(self.file, 'r').read()
+        self.parser = FastQCParser(content = content) 
 
 if __name__ == '__main__':
     logging.basicConfig( stream=sys.stderr )

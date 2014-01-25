@@ -1,5 +1,6 @@
 import re
 import logging
+import StringIO
 
 log = logging.getLogger(__name__)
 
@@ -29,11 +30,18 @@ EXPECTED_MODULES = [
 
 class FastQCParser(object):
 
-    def __init__(self, filename):
-
+    def __init__(self, filename = None, content = None):
+        
         self.modules = dict()
         self.module_results = dict()
-        self.input = open(filename, 'r')
+
+        if filename:
+            self.input = open(filename, 'r')
+        elif content:
+            self.input = StringIO.StringIO(content)
+        else:
+            raise ValueError('FastQCParser requires a filename or content')
+
         self._parse()
         self.input.close()
 
