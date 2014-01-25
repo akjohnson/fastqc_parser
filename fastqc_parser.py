@@ -8,10 +8,24 @@ WARN_RESULT="warn"
 FAIL_RESULT="fail"
 
 RESULTS = {
-  PASS_RESULT: PASS_RESULT,
-  WARN_RESULT: WARN_RESULT,
-  FAIL_RESULT: FAIL_RESULT
+    PASS_RESULT: PASS_RESULT,
+    WARN_RESULT: WARN_RESULT,
+    FAIL_RESULT: FAIL_RESULT
 }
+
+EXPECTED_MODULES = [
+    "Basic Statistics",
+    "Per base sequence quality",
+    "Per sequence quality scores",
+    "Per base sequence content",
+    "Per base GC content",
+    "Per sequence GC content",
+    "Per base N content",
+    "Sequence Length Distribution",
+    "Sequence Duplication Levels",
+    "Overrepresented sequences",
+    "Kmer Content",
+]
 
 class FastQCParser(object):
 
