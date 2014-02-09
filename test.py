@@ -70,6 +70,12 @@ class TestBasicParsing(unittest.TestCase):
 
         self.assertEqual(self.parser.get_total_percent_overrepresented_sequences(), Decimal('8.3953079290507106'))
 
+    def test_info_values(self):
+
+        info_values = self.parser.get_module_info_values("Sequence Duplication Levels")
+       
+        self.assertEqual(info_values['Total Duplicate Percentage'], '19.986675849527124') 
+        
 class TestContentParsing(TestBasicParsing):
     """
     Run the same tests as above, except on passed content instead of a file loaded.

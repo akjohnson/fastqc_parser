@@ -111,15 +111,32 @@ class FastQCParser(object):
         if len(lines) == 0:
             return None
 
-        header = lines[0]
+        infolines = []
 
-        if not header.startswith("#"):
-            log.error("Header does not start with # for %s content" % modulename) 
+        # gather up all information lines because of Sequence Duplication Levels
+        for line in lines:
+            if line.startswith("#"):
+                infolines.append(line)
+            else:
+                break
+
+        if not infolines:
+            log.error("Header does not exist for %s content" % modulename) 
             return None
 
+        infovalues = {}
+
+        if len(infolines) > 1:
+            for infoline in infolines[:-1]:
+                values = infoline.lstrip("#").rstrip().split("\t")
+                infovalues[values[0]] = values[1]
+                 
+        self.modules[modulename]['info_values'] = infovalues
+
+        # table header is always the last infoline
+        header = infolines[-1]
         header_values = header.lstrip("#").rstrip().split("\t")
         self.modules[modulename]['table_headers'] = header_values
-
 
         table = list()
 
@@ -144,6 +161,14 @@ class FastQCParser(object):
         else:
             self._parse_module_table(modulename)
             return self.modules[modulename]['table_headers']
+
+    def get_module_info_values(self, modulename):
+
+        if 'info_values' in self.modules[modulename]:
+            return self.modules[modulename]['info_values']
+        else:
+            self._parse_module_table(modulename)
+            return self.modules[modulename]['info_values']
 
     def get_total_percent_overrepresented_sequences(self):
 
