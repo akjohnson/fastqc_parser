@@ -80,6 +80,15 @@ class TestContentParsing(TestBasicParsing):
         content = open(self.file, 'r').read()
         self.parser = FastQCParser(content = content) 
 
+class TestOverrepresentedPass(unittest.TestCase):
+
+    def setUp(self):
+        self.file = "examples/overrepresented_pass.txt"
+        self.parser = FastQCParser(filename = self.file)
+
+    def test_total_overrepresented_sequences(self):
+        self.assertEqual(self.parser.get_total_percent_overrepresented_sequences(), Decimal('0.0'))
+
 if __name__ == '__main__':
     logging.basicConfig( stream=sys.stderr )
     logging.getLogger( "fastqc_parser" ).setLevel( logging.DEBUG )

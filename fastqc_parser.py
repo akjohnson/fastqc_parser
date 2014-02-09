@@ -106,6 +106,10 @@ class FastQCParser(object):
             return None
 
         lines = self.modules[modulename]['raw_content'] 
+        
+        # some modules that pass end up having no data; return early
+        if len(lines) == 0:
+            return None
 
         header = lines[0]
 
@@ -114,6 +118,8 @@ class FastQCParser(object):
             return None
 
         header_values = header.lstrip("#").rstrip().split("\t")
+        self.modules[modulename]['table_headers'] = header_values
+
 
         table = list()
 
@@ -121,7 +127,6 @@ class FastQCParser(object):
             table.append(dict(zip(header_values, values.strip().split("\t")))) 
 
         self.modules[modulename]['table'] = table
-        self.modules[modulename]['table_headers'] = header_values
 
         return table
 
@@ -145,6 +150,9 @@ class FastQCParser(object):
         overrepresented_sequences = self.get_module_table("Overrepresented sequences")
 
         total = Decimal('0.0')
+
+        if not overrepresented_sequences:
+            return total
 
         for row in overrepresented_sequences:
            total += Decimal(row['Percentage'])
