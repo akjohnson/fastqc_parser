@@ -106,7 +106,13 @@ class FastQCParser(object):
             return None
 
         lines = self.modules[modulename]['raw_content'] 
-        
+
+        # want these to be present even if they are empty
+        self.modules[modulename]['table'] = None
+        self.modules[modulename]['info_values'] = None
+        self.modules[modulename]['table_headers'] = None
+
+
         # some modules that pass end up having no data; return early
         if len(lines) == 0:
             return None
