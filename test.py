@@ -1,6 +1,7 @@
 import unittest
 import logging
 import sys
+from decimal import Decimal
 
 from fastqc_parser import FastQCParser, PASS_RESULT, FAIL_RESULT, WARN_RESULT
 
@@ -63,8 +64,14 @@ class TestBasicParsing(unittest.TestCase):
         headers = self.parser.get_module_table_headers('Basic Statistics')
         self.assertItemsEqual(['Measure', 'Value'], headers)
 
+    def test_total_overrepresented_sequences(self):
+
+        self.assertEqual(self.parser.get_total_percent_overrepresented_sequences(), Decimal('8.3953079290507106'))
+
 class TestContentParsing(TestBasicParsing):
-"""Run the same tests as above, except on passed content instead of a file loaded."""
+    """
+    Run the same tests as above, except on passed content instead of a file loaded.
+    """
 
     def setUp(self):
         self.file = "examples/basic.txt"

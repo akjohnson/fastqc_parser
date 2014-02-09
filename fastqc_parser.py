@@ -2,6 +2,8 @@ import re
 import logging
 import StringIO
 
+from decimal import Decimal
+
 log = logging.getLogger(__name__)
 
 PASS_RESULT="pass"
@@ -135,3 +137,14 @@ class FastQCParser(object):
         else:
             self._parse_module_table(modulename)
             return self.modules[modulename]['table_headers']
+
+    def get_total_percent_overrepresented_sequences(self):
+
+        overrepresented_sequences = self.get_module_table("Overrepresented sequences")
+
+        total = Decimal('0.0')
+
+        for row in overrepresented_sequences:
+           total += Decimal(row['Percentage'])
+
+        return total 
