@@ -114,9 +114,11 @@ class FastQCParser(object):
         infolines = []
 
         # gather up all information lines because of Sequence Duplication Levels
+        start_table = 0
         for line in lines:
             if line.startswith("#"):
                 infolines.append(line)
+                start_table+=1
             else:
                 break
 
@@ -140,7 +142,7 @@ class FastQCParser(object):
 
         table = list()
 
-        for values in lines[1:]:
+        for values in lines[start_table:]:
             table.append(dict(zip(header_values, values.strip().split("\t")))) 
 
         self.modules[modulename]['table'] = table
