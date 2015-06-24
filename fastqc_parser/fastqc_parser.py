@@ -18,7 +18,7 @@ RESULTS = {
     FAIL_RESULT: FAIL_RESULT
 }
 
-EXPECTED_MODULES = [
+AVAILABLE_MODULES_V10 = [
     "Basic Statistics",
     "Per base sequence quality",
     "Per sequence quality scores",
@@ -32,12 +32,29 @@ EXPECTED_MODULES = [
     "Kmer Content",
 ]
 
+AVAILABLE_MODULES_V11 = [
+    "Basic Statistics",
+    "Per base sequence quality",
+    "Per tile sequence quality",
+    "Per sequence quality scores",
+    "Per base sequence content",
+    "Per sequence GC content",
+    "Per base N content",
+    "Sequence Length Distribution",
+    "Sequence Duplication Levels",
+    "Overrepresented sequences",
+    "Adapter Content",
+    "Kmer Content",
+]
+
 class FastQCParser(object):
 
     def __init__(self, filename = None, content = None):
         
         self.modules = dict()
         self.module_results = dict()
+
+        self.AVAILABLE_MODULES = []
 
         if filename:
             self.input = open(filename, 'r')
@@ -61,10 +78,19 @@ class FastQCParser(object):
     def _parse_version(self):
 
         line = self.input.readline().strip()
-        m = re.match('##FastQC\t(?P<version>[0-9a-z.]+)', line)
+        m = re.match('##FastQC\t(?P<version>(?P<major>\d+)\.(?P<minor>\d+).(?P<patch>\d+))', line)
 
         if m:
             self.version = m.group('version')
+            self.version_major = int(m.group("major"))
+            self.version_minor = int(m.group("minor"))
+            self.version_patch = int(m.group("patch"))
+
+            if self.version_major == 0 and self.version_minor == 10:
+                self.POSSIBLE_MODULES = AVAILABLE_MODULES_V10
+            elif self.version_major == 0 and self.version_minor == 11:
+                self.POSSIBLE_MODULES = AVAILABLE_MODULES_V11
+
             log.debug("Version: %s" % self.version)
         else:
             self.version = None
@@ -81,6 +107,7 @@ class FastQCParser(object):
             return
 
         modulename = m.group('modulename')
+        self.AVAILABLE_MODULES.append(modulename)
         result = m.group('result')
 
         log.debug("Module: %s (%s)" % (modulename, result))
@@ -190,4 +217,16 @@ class FastQCParser(object):
         for row in overrepresented_sequences:
            total += Decimal(row['Percentage'])
 
-        return total 
+        return total
+
+    def get_filtered_sequences(self):
+
+        if self.version_major == 0 and self.version_minor == 10:
+            measure_name = "Filtered Sequences"
+        elif self.version_major == 0 and self.version_minor == 11:
+            measure_name = "Sequences flagged as poor quality"
+
+        for item in self.get_module_table('Basic Statistics'):
+            if item["Measure"] == measure_name: return int(item["Value"])
+
+        return None
