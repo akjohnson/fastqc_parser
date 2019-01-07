@@ -2,7 +2,10 @@ from __future__ import unicode_literals
 
 import re
 import logging
-import StringIO
+try:
+    from StringIO import StringIO
+except ImportError:
+    from io import StringIO
 
 from decimal import Decimal
 
