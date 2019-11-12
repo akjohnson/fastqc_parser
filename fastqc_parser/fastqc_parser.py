@@ -62,7 +62,7 @@ class FastQCParser(object):
         if filename:
             self.input = open(filename, 'r')
         elif content:
-            self.input = StringIO.StringIO(content)
+            self.input = StringIO(content)
         else:
             raise ValueError('FastQCParser requires a filename or content')
 
